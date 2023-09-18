@@ -1,0 +1,7 @@
+---
+- name: capture users report in csv file
+  hosts: all
+  gather_facts: no
+
+  roles:
+  - linux_users_report

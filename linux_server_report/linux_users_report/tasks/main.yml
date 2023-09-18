@@ -1,0 +1,27 @@
+---
+# tasks file for linux_users_report
+
+- name: min facts
+  setup:
+    gather_subset:
+    - min
+
+- set_fact:
+    outputfile: "/tmp/users-report-{{ ansible_date_time.date }}.{{ ansible_date_time.iso8601_basic }}"
+
+- name:
+  debug:
+    msg: "outputfile is {{ outputfile }}"
+
+- name: read passwd file
+  shell: cat /etc/passwd | awk -F ":" '{print "{{ inventory_hostname }},"$1 "," $3 "," $4}'
+  register: output
+
+- name: capture output
+  lineinfile:
+    line: "{{ item }}"
+    path: "{{ outputfile }}"
+    create: yes
+  with_items:
+    - "{{ output.stdout_lines }}" 
+  #delegate_to: localhost
